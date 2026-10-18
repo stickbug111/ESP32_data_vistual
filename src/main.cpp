@@ -30,7 +30,7 @@ PubSubClient client(espClient);
 String site_id = "site_01";
 String zone_id = "zone_A";
 String device_id = "node_01"; // ต้องไม่ซ้ำกัน
-String base_topic = "eaknakorn/" + site_id + "/" + zone_id + "/" + device_id + "/";
+String base_topic = "ZhanZhao/" + site_id + "/" + zone_id + "/" + device_id + "/";
 
 unsigned long lastMsg = 0; 
 const unsigned long MQTT_RETRY_INTERVAL_MS = 5000;

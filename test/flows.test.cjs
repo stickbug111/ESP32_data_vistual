@@ -16,7 +16,7 @@ test('flow IDs and references are valid, with one MQTT input feeding the router'
   }
   const inputs = nodes.filter(n => n.type === 'mqtt in');
   assert.equal(inputs.length, 1);
-  assert.equal(inputs[0].topic, 'smart_farm/site_01/zone_A/node_01/#');
+  assert.equal(inputs[0].topic, 'ZhanZhao/site_01/zone_A/node_01/#');
   assert.equal(inputs[0].datatype, 'json');
   assert(inputs[0].wires.flat().includes('router_func'));
 
@@ -34,7 +34,7 @@ test('flow IDs and references are valid, with one MQTT input feeding the router'
 const route = new Function('msg', nodes.find(n => n.id === 'router_func').func);
 test('telemetry reaches InfluxDB and gauges with correct fields and tags', () => {
   const payload = { temperature: 25.5, humidity: 60, pump_state: 1, valve_state: 0 };
-  const result = route({ topic: 'smart_farm/site_01/zone_A/node_01/telemetry', payload });
+  const result = route({ topic: 'ZhanZhao/site_01/zone_A/node_01/telemetry', payload });
   assert.equal(result[0].measurement, 'sensor_data');
   assert.deepEqual(result[0].payload, [
     { temperature: 25.5, humidity: 60, pump: 1, valve: 0 },
@@ -48,26 +48,26 @@ test('telemetry reaches InfluxDB and gauges with correct fields and tags', () =>
 
 test('status routes separately and ACKs update only the acknowledged relay switch', () => {
   for (const status of ['online', 'offline']) {
-    assert.deepEqual(route({ topic: 'smart_farm/site_01/zone_A/node_01/status', payload: { status } }),
+    assert.deepEqual(route({ topic: 'ZhanZhao/site_01/zone_A/node_01/status', payload: { status } }),
       [null, null, { payload: status }, null, null]);
   }
 
   assert.deepEqual(route({
-    topic: 'smart_farm/site_01/zone_A/node_01/ack',
+    topic: 'ZhanZhao/site_01/zone_A/node_01/ack',
     payload: { ack: 'pump', state_set: 0 }
   }), [null, null, null, { payload: { cmd: 'pump', state: 0 } }, null]);
   assert.deepEqual(route({
-    topic: 'smart_farm/site_01/zone_A/node_01/ack',
+    topic: 'ZhanZhao/site_01/zone_A/node_01/ack',
     payload: { ack: 'valve', state_set: 1 }
   }), [null, null, null, null, { payload: { cmd: 'valve', state: 1 } }]);
 
   for (const msg of [
-    { topic: 'smart_farm/site_01/zone_A/node_01/ack', payload: { ack: 'pump' } },
-    { topic: 'smart_farm/site_01/zone_A/node_01/telemetry', payload: 'bad' }
+    { topic: 'ZhanZhao/site_01/zone_A/node_01/ack', payload: { ack: 'pump' } },
+    { topic: 'ZhanZhao/site_01/zone_A/node_01/telemetry', payload: 'bad' }
   ]) assert.deepEqual(route(msg), [null, null, null, null, null]);
 
   assert.deepEqual(route({
-    topic: 'smart_farm/site_01/zone_A/node_01/ack',
+    topic: 'ZhanZhao/site_01/zone_A/node_01/ack',
     payload: { ack: 'pump', state_set: '1' }
   }), [null, null, null, null, null]);
 });
